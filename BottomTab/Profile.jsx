@@ -1,14 +1,43 @@
 import { StyleSheet, Text, View , TouchableOpacity,Image} from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SearchContent from '../Components/SearchContent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = ({navigation}) => {
+  const [userData, setuserData] = useState('')
+  useEffect(()=>{
+    AsyncStorage.getItem('user')
+  .then(async value =>{
+    // console.log(data)
+    // setuserData(JSON.parse(data))
+    fetch('http://10.0.2.2:3000/profile',{
+      method:'POST',
+      headers:{
+        "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          email : JSON.parse(value).user.email // extracting email from data
+        })
+    })
+    .then(res => res.json())
+    .then(async data =>{
+      if(data.message == 'User Found Successfully'){
+        setuserData(data.user)
+        console.log(data.user)
+      }
+    })
+    .catch(error => alert(error))
+  })
+  .catch(error => alert(error))
+
+  },[])
+  console.log('userData', userData)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headtext}>bha_vik</Text>
+        <Text style={styles.headtext}>{userData.username}</Text>
         <View style={{flexDirection: 'row'}}>
         <TouchableOpacity onPress={()=> navigation.navigate('AddPost')}><Icon style={{marginRight: 20}} name='plus-square-o' color='white' size={35}/></TouchableOpacity>
         <TouchableOpacity><Ionicons name='menu-outline' color='white' size={35}/></TouchableOpacity>
@@ -18,33 +47,57 @@ const Profile = ({navigation}) => {
       </View>
 
       <View style={styles.imagewrapper}>
-      <Image
+      {/* <Image
+              source={require('../assets/images/avatar.png')}
+              style={styles.headerImage}
+            /> */}
+            {
+              userData?.profilepic?.length > 0 ?
+              <Image
+              source={{uri: userData.profilepic}}
+              style={styles.headerImage}
+            />
+            :
+            <Image
               source={require('../assets/images/avatar.png')}
               style={styles.headerImage}
             />
-
+            }
+              
             <View style={styles.outsidewrapper}>
               <View style={styles.insidewrapper}>
-                <Text style={styles.numbertext}>26</Text>
+                <Text style={styles.numbertext}>{userData?.posts?.length || 0}</Text>
                 <Text style={styles.basetext}>Posts</Text>
               </View>
 
               <View style={styles.insidewrapper}>
-                <Text style={styles.numbertext}>500</Text>
+                <Text style={styles.numbertext}>{userData?.followers?.length || 0}</Text>
                 <Text style={styles.basetext}>Followers</Text>
               </View>
 
               <View style={styles.insidewrapper}>
-                <Text style={styles.numbertext}>800</Text>
+                <Text style={styles.numbertext}>{userData?.following?.length || 0}</Text>
                 <Text style={styles.basetext}>Following</Text>
               </View>
             </View>
       </View>
+      {/* the optional chaining (?.) 
+      ensures that if userData is undefined or 
+      any of its properties (posts, followers, or following)
+       is undefined, the expression evaluates to undefined instead
+        of throwing an error. The || 0 part is used to provide a default
+         value of 0 if the property is undefined. */}
 
       <View style={styles.status}>
-        <Text style={styles.statustext}>somthing is very good.</Text>
-        <Text style={styles.statustext}>somthing is very good.</Text>
-        <Text style={styles.statustext}>somthing is very good.</Text>
+        {
+          userData?.description?.length > 0 &&
+          <Text style={styles.statustext}>{userData.description}</Text>
+          
+
+        }
+        
+        {/* <Text style={styles.statustext}>somthing is very good.</Text>
+        <Text style={styles.statustext}>somthing is very good.</Text> */}
       </View>
 
       <View style={styles.buttons}>
@@ -59,7 +112,13 @@ const Profile = ({navigation}) => {
 
       </View>
       <View>
-      <SearchContent />
+        {
+          userData?.posts?.length >0 ?
+          <SearchContent />
+          :
+          <Text style={styles.nopost_text}>No post yet</Text>
+        }
+      
       </View>
     </View>
   )
@@ -156,6 +215,16 @@ buttonwrapper:{
 buttontext:{
   color: 'white',
   fontSize: 15,
+  fontFamily:'Poppins-Regular',
+  letterSpacing: 1,
+},
+nopost_text:{
+  textAlign: 'center',
+  color: 'white',
+  marginTop:200,
+  width: '100%',
+  justifyContent: 'center',
+  fontSize: 20,
   fontFamily:'Poppins-Regular',
   letterSpacing: 1,
 }

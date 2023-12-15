@@ -11,33 +11,31 @@ import {
   } from 'react-native';
   import Ionicons from 'react-native-vector-icons/Ionicons';
   
-  const SetPassword = ({navigation, route}) => {
-    const {email, username} = route.params
+  const Forgot_ResetPassword = ({navigation, route}) => {
+    const {email} = route.params
     const[password, setpassword] = useState('')
     const[confpassword, setconfpassword] = useState('')
     const[loding, setloding] = useState(false)
-    const name = "bhavik"
     const passwordhandler = () =>{
       if(password == '' || confpassword == ''){
         alert("Please enter your Password")
       }
       else if(password == confpassword){
         setloding(true)
-        fetch('http://10.0.2.2:3000/signup',{
+        fetch('http://10.0.2.2:3000/passreset',{
                 method:'POST',
                 headers:{
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
                     email : email,
-                    username : username,
                     password: password,
-                    name: name
+            
                 })
             })
             .then((res)=> res.json()).then(
               data=>{
-                if(data.message === "User Registered Successfully"){
+                if(data.message === "Password Changed Successfully"){
                   setloding(false)
                   alert(data.message)
                   navigation.navigate('Login')
@@ -48,7 +46,8 @@ import {
                 }
               }
             )
-            .catch((err)=> console.log(err))
+            .catch((err)=> 
+            alert(err))
       }
       else{
         alert("Password Didn't matched")
@@ -110,7 +109,7 @@ import {
     );
   };
   
-  export default SetPassword;
+  export default Forgot_ResetPassword;
   
   const styles = StyleSheet.create({
     box: {

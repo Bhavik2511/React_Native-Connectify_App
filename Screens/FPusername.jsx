@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -6,51 +7,47 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
   } from 'react-native';
   import Ionicons from 'react-native-vector-icons/Ionicons';
-  import { useState } from 'react';
 
-const FPemail = ({navigation}) => {
+const FPusername = ({navigation, route}) => {
+    const{email}= route.params
+    const[username, setusername] = useState('')
+    const[loding, setloding] = useState(false)
 
-  const[email, setemail] = useState('')
-  const[loding, setloding] = useState(false)
-
-const emailhandler=()=>{
-  if(email == ''){
-    alert("Please enter your Email")
-  }
-  else{
-    setloding(true)
-    fetch('http://10.0.2.2:3000/verify',{
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email
-      })
-    })
-    .then(res => res.json()).then(
-      data => {
-        if(data.error === "Invalid Credentials"){
-          alert('Invalid Credentials')
-          setloding(false)
+    const usernamehandler=()=>{
+        if(username == ''){
+            alert("Please enter your Username")
         }
-        else if(data.message === "Email sent successfully"){
-          setloding(false)
-          alert(data.message)
-          navigation.navigate('FPcode', {
-            useremail: data.email,
-            userVerificationCode: data.verificationcode
-          })
+        else{
+            setloding(true)
+            fetch('http://10.0.2.2:3000/usernamechange',{
+                method:'POST',
+                headers:{
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email : email,
+                    username : username
+                })
+            })
+            .then(res => res.json()).then(
+                data =>{
+                    if(data.message === "Username Avaialable"){
+                        setloding(false)
+                        alert("Username set successfully")
+                        navigation.navigate('SetPassword', {email: email, username: username});
+                    }
+                    else{
+                        setloding(false)
+                        alert("Username is not available")
+                    }
+                }
+            )
+            .catch((error)=>{console.log(error)})
         }
-      }
-
-    )
-  }
-
-}
+    }
 
   return (
     <>
@@ -69,30 +66,25 @@ const emailhandler=()=>{
                 /> */}
                 <Text style={styles.image}>Connectify</Text>
                 <TextInput
-                  placeholder="Enter your email"
+                  placeholder="Username"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
 
-                  onChangeText={(text) =>{setemail(text)}}
-
-
+                  onChangeText={(text)=> setusername(text)}
                 />
                 {
-                  loding ? <ActivityIndicator 
-                  size={'extralarge'} 
-                  color={'white'}
-                  style={{paddingTop: 10}}
-                  />
-                   : 
-                  <TouchableOpacity >
-                  <Text style={styles.logintext} onPress={()=> emailhandler() }>Next</Text>
+                    loding ? <ActivityIndicator 
+                    size={'extralarge'} 
+                    color={'white'}
+                    style={{paddingTop: 10}} />
+                    :
+                    <TouchableOpacity >
+                  <Text style={styles.logintext} onPress={()=> usernamehandler()}>Next</Text>
                 </TouchableOpacity>
                 }
                
-                {/* <TouchableOpacity >
-                  <Text style={styles.logintext} onPress={()=> emailhandler() }>Next</Text>
-                </TouchableOpacity> */}
-              {/* navigation.navigate('FPcode') */}
+                
+                
               </View>
               <View style={styles.bottom}>
                 <Text style={styles.sign}>by. Bhavik</Text>
@@ -105,7 +97,7 @@ const emailhandler=()=>{
   )
 }
 
-export default FPemail
+export default FPusername
 
 const styles = StyleSheet.create({
     box: {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -5,15 +6,47 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Image,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({navigation}) => {
-  // const [nav, setnav] = useState();
-  // const Buttonpress = () =>{
-  //   setnav(navigation.navigate('Registration'))
-  // }
+const [email, setemail] =useState('');
+const [password, setPassword] =useState('');
+const [loding, setloding] =useState(false)
+const loginhandler=() =>{
+  if(email == '' || password==''){
+    alert('Please Enter your email and password')
+  }
+  else{
+    setloding(true)
+    fetch('http://10.0.2.2:3000/login',{
+      method:'POST',
+      headers:{
+        "Content-Type":"application/json"
+        },
+        body: JSON.stringify({email, password})
+    })
+    .then(res => res.json())
+    .then(async data =>{
+      if(data.error){
+        alert(data.error);
+        setloding(false) 
+      }
+      else if(data.message === "Login Successfull"){
+        setloding(false)
+        await AsyncStorage.setItem('user', JSON.stringify(data) )
+        navigation.navigate('Home', {data})
+      }
+    })
+    .catch(error =>{
+      setloding(false)
+      alert(error)
+    })
+  }
+}
+
   return (
     <>
       <KeyboardAvoidingView
@@ -25,32 +58,42 @@ const Login = ({navigation}) => {
             </TouchableOpacity>
             <View style={styles.box}>
               <View style={styles.mainbody}>
-                {/* <Image
-                  source={require('../assets/images/Connectify.png')}
-                  style={styles.image}
-                /> */}
+                
                 <Text style={styles.image}>Connectify</Text>
                 <TextInput
-                  placeholder="Connectify_Id"
+                  placeholder="Connectify email"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
+                  onChangeText={(text)=> setemail(text)}
                 />
                 <TextInput
                   placeholder="Password"
                   style={styles.textinput}
                   secureTextEntry={true}
                   placeholderTextColor="#a9a9a9"
+                  onChangeText={(text)=> setPassword(text)}
                 />
-                <TouchableOpacity>
-                  <Text style={styles.logintext} onPress={()=> navigation.navigate('Home')}>Log In</Text>
+
+                {
+                  loding ? 
+                  <ActivityIndicator
+                  size={'extralarge'} 
+                    color={'white'}
+                    style={{paddingTop: 10}} 
+                    /> 
+                  :
+                  <TouchableOpacity>
+                  <Text style={styles.logintext} onPress={()=> loginhandler()}>Log In</Text>
                 </TouchableOpacity>
+                }
+                
                 <TouchableOpacity>
-                  <Text style={styles.passtext} onPress={()=> navigation.navigate('FPemail')}>Forgotten Password?</Text>
+                  <Text style={styles.passtext} onPress={()=> navigation.navigate('Forgot_email')}>Forgotten Password?</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.bottom}>
                 <TouchableOpacity>
-                  <Text style={styles.newacctext} onPress={() => navigation.navigate('Registration')}>Create new account</Text>
+                  <Text style={styles.newacctext} onPress={() => navigation.navigate('FPemail')}>Create new account</Text>
                 </TouchableOpacity>
                 <Text style={styles.sign}>by. Bhavik</Text>
               </View>

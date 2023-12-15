@@ -11,46 +11,46 @@ import {
   import Ionicons from 'react-native-vector-icons/Ionicons';
   import { useState } from 'react';
 
-const FPemail = ({navigation}) => {
+const Forgot_email = ({navigation}) => {
 
   const[email, setemail] = useState('')
   const[loding, setloding] = useState(false)
 
-const emailhandler=()=>{
-  if(email == ''){
-    alert("Please enter your Email")
-  }
-  else{
-    setloding(true)
-    fetch('http://10.0.2.2:3000/verify',{
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email
+  const emailhandler=()=>{
+    if(email == ''){
+      alert("Please enter your Email")
+    }
+    else{
+      setloding(true)
+      fetch('http://10.0.2.2:3000/forgotpassword',{
+        method: 'post',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email
+        })
       })
-    })
-    .then(res => res.json()).then(
-      data => {
-        if(data.error === "Invalid Credentials"){
-          alert('Invalid Credentials')
-          setloding(false)
+      .then(res => res.json()).then(
+        data => {
+          if(data.error === "Email Didn't Match, to Registered Email"){
+            alert('Invalid Credentials')
+            setloding(false)
+          }
+          else if(data.message === "Verification Code sent to your Email"){
+            setloding(false)
+            alert(data.message)
+            navigation.navigate('Forgot_code', {
+              useremail: data.email,
+              userVerificationCode: data.verificationcode
+            })
+          }
         }
-        else if(data.message === "Email sent successfully"){
-          setloding(false)
-          alert(data.message)
-          navigation.navigate('FPcode', {
-            useremail: data.email,
-            userVerificationCode: data.verificationcode
-          })
-        }
-      }
-
-    )
+  
+      )
+    }
+  
   }
-
-}
 
   return (
     <>
@@ -69,7 +69,7 @@ const emailhandler=()=>{
                 /> */}
                 <Text style={styles.image}>Connectify</Text>
                 <TextInput
-                  placeholder="Enter your email"
+                  placeholder="Enter Registered mail"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
 
@@ -105,7 +105,7 @@ const emailhandler=()=>{
   )
 }
 
-export default FPemail
+export default Forgot_email
 
 const styles = StyleSheet.create({
     box: {

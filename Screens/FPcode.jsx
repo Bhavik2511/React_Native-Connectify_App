@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -9,7 +10,20 @@ import {
   } from 'react-native';
   import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const FPcode = ({navigation}) => {
+const FPcode = ({navigation, route}) => {
+  const{useremail, userVerificationCode} = route.params // so here we have got the user mail id and verification code in this component and we can now use it here.
+  console.log(useremail, userVerificationCode)
+
+  const[verifycode, setverifycode] = useState('')
+  const verifycodehandler = ()=>{
+    if(verifycode == userVerificationCode){
+      navigation.navigate('FPusername', {
+        email: useremail
+      })
+      alert("Verification Successfull.")
+    }
+    else{alert("You have entered wrong verification code")}
+  }
   return (
     <>
     <KeyboardAvoidingView
@@ -30,10 +44,16 @@ const FPcode = ({navigation}) => {
                   placeholder="Enter 6 digit code"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
+
+                  onChangeText={(text)=> setverifycode(text)}
                 />
                
+
+               {
+
+               }
                 <TouchableOpacity >
-                  <Text style={styles.logintext} onPress={()=> navigation.navigate('SetPassword')}>Next</Text>
+                  <Text style={styles.logintext} onPress={()=> verifycodehandler()}>Next</Text>
                 </TouchableOpacity>
                 
               </View>

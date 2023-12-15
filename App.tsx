@@ -10,6 +10,10 @@ import FPcode from './Screens/FPcode';
 import SetPassword from './Screens/SetPassword';
 import Header from './Components/Header';
 import { TabNavigator } from './Components/TabNavigator';
+import FPusername from './Screens/FPusername';
+import Forgot_email from './Screens/Forgot_email';
+import Forgot_code from './Screens/Forgot_code';
+import Forgot_ResetPassword from './Screens/Forgot_ResetPassword';
 
 
 const Stack = createNativeStackNavigator();
@@ -23,7 +27,11 @@ function StackNavigator() {
       <Stack.Screen name="Registration" component={Registration} />
       <Stack.Screen name="FPemail" component={FPemail} />
       <Stack.Screen name="FPcode" component={FPcode} />
+      <Stack.Screen name="FPusername" component={FPusername} />
       <Stack.Screen name="SetPassword" component={SetPassword} />
+      <Stack.Screen name="Forgot_email" component={Forgot_email} />
+      <Stack.Screen name="Forgot_code" component={Forgot_code} />
+      <Stack.Screen name="Forgot_ResetPassword" component={Forgot_ResetPassword} />
       <Stack.Screen name="Home" component={TabNavigator} />
     </Stack.Navigator>
   );

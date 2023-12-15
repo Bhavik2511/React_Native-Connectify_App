@@ -34,7 +34,12 @@ const Registration = ({navigation}) => {
                   /> */}
                 <Text style={styles.headding}>Create Account.</Text>
                 <TextInput
-                  placeholder="Phone Number or email"
+                  placeholder="Gmail Id"
+                  style={styles.textinput}
+                  placeholderTextColor="#a9a9a9"
+                />
+                <TextInput
+                  placeholder="6 digit OTP"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
                 />
@@ -44,7 +49,7 @@ const Registration = ({navigation}) => {
                   placeholderTextColor="#a9a9a9"
                 />
                 <TextInput
-                  placeholder="Connectify Id"
+                  placeholder="Connectify_Id"
                   style={styles.textinput}
                   placeholderTextColor="#a9a9a9"
                 />
