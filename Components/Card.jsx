@@ -6,11 +6,17 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/EvilIcons';
 
-const Card = () => {
+const Card = ({userdata}) => {
+  const [visible, setvisible] = useState(false)
+  const hidecomment=()=>{
+setvisible(true)
+  }
+
+
   return (
     <View style={styles.container}>
       <View style={styles.Header}>
@@ -22,10 +28,10 @@ const Card = () => {
               alignItems: 'center',
             }}>
             <Image
-              source={require('../assets/images/avatar.png')}
+              source={{uri: userdata.profile_pic}}
               style={styles.headerImage}
             />
-            <Text style={styles.headerText}>Bhavik_Sharma </Text>
+            <Text style={styles.headerText}>{userdata.username} </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity>
@@ -39,7 +45,7 @@ const Card = () => {
 
       <View style={styles.Imagewrapper}>
         <Image
-          source={require('../assets/images/image.png')}
+          source={{uri: userdata.main_pic}}
           style={styles.image}
         />
       </View>
@@ -79,22 +85,30 @@ const Card = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <Text style={styles.liketext}>7,870 likes</Text>
+          <Text style={styles.liketext}>{userdata.likes} likes</Text>
         </View>
 
         <View style={styles.comment}>
           <Text>
-            <Text style={styles.commenthedtext}>Bhavik_Sharma</Text>
+            <Text style={styles.commenthedtext}>{userdata.username}</Text>
             <Text style={styles.commentbodytext}>
-              {'   '}Lorem ipsum dolor sit amet, consectetur adipisicing
-              elit.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+             {'  '} {userdata.description}
             </Text>
           </Text>
         </View>
         <View>
-          <TouchableOpacity>
-            <Text style={styles.viewcomment}>View all 2 coments</Text>
+          <TouchableOpacity onPress={hidecomment} >
+            <Text style={styles.viewcomment} >View all coments</Text>
           </TouchableOpacity>
+          {
+            visible  && <View>{
+              userdata.comments.map((comment)=>{
+                return <Text key={comment.id} style={styles.commentbodytext}>{comment.text}</Text>
+              })
+            }</View>
+          }
+          
+          
         </View>
       </View>
     </View>

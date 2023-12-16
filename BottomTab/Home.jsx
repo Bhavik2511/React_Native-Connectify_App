@@ -20,19 +20,36 @@ const Home = () => {
   .catch(error => alert(error))
 
   },[])
-  console.log('userData', userData)
+  // console.log('userData', userData)
+
+  const [userdata, setuserdata] = useState([])
+  useEffect(()=>{
+      const reterivedata = async () =>{
+          try{
+              let res = await fetch('http://10.0.2.2:3000/getdata')
+              const data = await res.json()
+              setuserdata(data)
+              // console.log(data)
+          }
+          catch(error){
+              console.log("Error in fetching data", error)
+          }
+      }
+      reterivedata()
+  }, [])
   
   return (
     <SafeAreaView>
     <View style={styles.container}>
       <StatusBar backgroundColor={'#0D0C12'}/>
     <Header />
-    <Stories />
+    <Stories userdata={userdata}/>
     <ScrollView>
-    <Card />
-    <Card />
-    <Card />
-    <Card />
+      {
+        userdata.map((data)=>{
+          return <Card key={data.id} userdata={data} />
+        })
+      }
     </ScrollView>
     </View>
     </SafeAreaView>

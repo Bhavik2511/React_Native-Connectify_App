@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View , TouchableOpacity,Image} from 'react-native'
+import { StyleSheet, Text, View , TouchableOpacity,Image, ScrollView} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,7 +25,7 @@ const Profile = ({navigation}) => {
     .then(async data =>{
       if(data.message == 'User Found Successfully'){
         setuserData(data.user)
-        console.log(data.user)
+        // console.log(data.user)
       }
     })
     .catch(error => alert(error))
@@ -33,7 +33,7 @@ const Profile = ({navigation}) => {
   .catch(error => alert(error))
 
   },[])
-  console.log('userData', userData)
+  // console.log('userData', userData)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -66,7 +66,8 @@ const Profile = ({navigation}) => {
               
             <View style={styles.outsidewrapper}>
               <View style={styles.insidewrapper}>
-                <Text style={styles.numbertext}>{userData?.posts?.length || 0}</Text>
+                {/* <Text style={styles.numbertext}>{userData?.posts?.length || 0}</Text> */}
+                <Text style={styles.numbertext}>15</Text>
                 <Text style={styles.basetext}>Posts</Text>
               </View>
 
@@ -112,13 +113,14 @@ const Profile = ({navigation}) => {
 
       </View>
       <View>
+        <ScrollView>
         {
-          userData?.posts?.length >0 ?
+          userData?.posts?.length >=0 ?
           <SearchContent />
           :
           <Text style={styles.nopost_text}>No post yet</Text>
         }
-      
+      </ScrollView>
       </View>
     </View>
   )
